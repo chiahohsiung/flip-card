@@ -11,6 +11,9 @@ class App extends React.Component {
       cards: [],
       cardsMatched: [],
       curFlippedCards: [],
+      /* should optimize later */
+      // to flip back cards
+      flipped: Array(8).fill(false)
     }
     this.handleReset = this.handleReset.bind(this)
     this.handleCardClick = this.handleCardClick.bind(this)
@@ -20,18 +23,19 @@ class App extends React.Component {
     this.handleReset()
   }
 
-  handleCardClick(cardNumSuit) {
+  handleCardClick(cardNumSuit, id) {
     console.log('cardNumSuit', cardNumSuit)
     const newFlippedCards = [...this.state.curFlippedCards]
-    newFlippedCards.push(cardNumSuit)
-
+    newFlippedCards.push(id)
+    const newFlipped = [...this.state.flipped]
+    newFlipped[id] = !newFlipped[id]
     this.setState({
-      curFlippedCards: newFlippedCards
+      curFlippedCards: newFlippedCards,
+      flipped: newFlipped
     })
   }
-  // random generate pairs
-  handleReset(pairs = 4) {
-    console.log(pairs)
+
+  generateRandomPairs(pairs = 4) {
     // club diamond heart spade
     const suits = ['C', 'D', 'H', 'S']
     // 1~10 A K Q J
@@ -56,25 +60,44 @@ class App extends React.Component {
       cards: sampledCards
     })
   }
+
+  handleReset() {
+    this.setState({
+      cardsMatched: [],
+      curFlippedCards: [],
+      flipped: Array(8).fill(false)
+    }, () => {
+      setTimeout(() => this.generateRandomPairs(), 1000) // make sure the card flipped first
+    })
+  }
   // check match
   componentDidUpdate() {
     if (this.state.cardsMatched.length === 4) {
       setTimeout(() => alert('you win'), 1000)
     }
     if (this.state.curFlippedCards.length === 2) {
-      if (this.state.curFlippedCards[0] === this.state.curFlippedCards[1]) {
+      const firstCardId = this.state.curFlippedCards[0]
+      const secondCardId = this.state.curFlippedCards[1]
+      if (this.state.cards[firstCardId] === this.state.cards[secondCardId]) {
         /* optimize here later */
-
         const newCardsMatched = [...this.state.cardsMatched]
-        newCardsMatched.push(this.state.curFlippedCards[0])
+        newCardsMatched.push(this.state.cards[firstCardId])
         this.setState({
           cardsMatched: newCardsMatched
         })
-        
-
       }
       else {
+        /* should optimize later */
         // flip back
+        setTimeout(() => {
+          const newFlipped = [...this.state.flipped]
+          newFlipped[firstCardId] = false
+          newFlipped[secondCardId] = false
+          this.setState({
+            flipped: newFlipped
+          })
+        }, 1000)
+
       }
       // empty the cur flipped cards
       this.setState({
@@ -90,6 +113,7 @@ class App extends React.Component {
           key={index}
           id={index}
           numSuit={card}
+          flipped={this.state.flipped[index]}
           matched={this.state.cardsMatched.includes(card) ? true : false}
           handleCardClick={this.handleCardClick}
         />
@@ -97,24 +121,24 @@ class App extends React.Component {
     })
     console.log('this.state.curFlippedCards', this.state.curFlippedCards)
     console.log('this.state.cardsMatched', this.state.cardsMatched)
+    console.log('this.state.flipped', this.state.flipped)
     return (
       <div>
         <div className="header">
           <h1>My Flip Card Game</h1>
-          <h2>Goal: 4    Current Matched Pairs: {this.state.cardsMatched.length}</h2>
-        </div>
-        <button
-          className='reset-btn'
-          onClick={() => this.handleReset(2)}>
-          Reset
+          <h2>Goal:4 Current Matched Pairs: {this.state.cardsMatched.length}</h2>
+          <button
+            className='reset-btn'
+            onClick={() => this.handleReset()}>
+            Reset
         </button>
+        </div>
         <div className='card-container'>
           {cardsContent}
         </div>
       </div>
     );
   }
-
 }
 
 export default App;
