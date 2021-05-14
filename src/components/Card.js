@@ -9,12 +9,12 @@ export default function Card(props) {
   const isflippedClass = isflipped ? 'is-flipped' : 'not-flipped'
 
   return (
-    <div class="scene">
-      <div class={`card ${isflippedClass}`} onClick={() => flip(!isflipped)}>
-        <div class="card__face card__face--front">
+    <div className="scene">
+      <div className={`card ${isflippedClass}`} onClick={() => flip(!isflipped)}>
+        <div className="card__face card__face--front">
           <img src={redBack} />
         </div>
-        <div class="card__face card__face--back">
+        <div className="card__face card__face--back">
           <img src={twoC} />
         </div>
       </div>
