@@ -1,6 +1,4 @@
 import React, { useState } from 'react';
-import twoC from '../assets/2C.png';
-import redBack from '../assets/red_back.png'
 import './Card.css'
 
 export default function Card(props) {
@@ -12,10 +10,10 @@ export default function Card(props) {
     <div className="scene">
       <div className={`card ${isflippedClass}`} onClick={() => flip(!isflipped)}>
         <div className="card__face card__face--front">
-          <img src={redBack} />
+          <img src="assets/red_back.png" />
         </div>
         <div className="card__face card__face--back">
-          <img src={twoC} />
+          <img src={`assets/${props.id}.png`} />
         </div>
       </div>
     </div>

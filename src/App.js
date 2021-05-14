@@ -5,7 +5,14 @@ import Card from './components/Card'
 class App extends React.Component {
   constructor(props) {
     super(props)
+    this.state = {
+      cards: []
+    }
     this.handleReset = this.handleReset.bind(this)
+
+  }
+  componentDidMount() {
+    this.handleReset()
   }
   // random generate pairs
   handleReset(pairs=4) {
@@ -25,9 +32,13 @@ class App extends React.Component {
       }
     }
     console.log(sampledCards)
+    this.setState({
+      cards: sampledCards
+    })
   }
   // check match
   render() {
+    const cardsContent = this.state.cards.map((card, index) => <><Card key={index} id={card}/><Card key={index + 4} id={card}/></>)
     return (
       <div>
         <p>My Flip Card Game</p>
@@ -37,7 +48,7 @@ class App extends React.Component {
           Reset
         </button>
         <div className='card-container'>
-          <Card />
+          {cardsContent}
         </div>
       </div>
     );
